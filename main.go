@@ -26,7 +26,7 @@ func main() {
         //db.Create(&Widgets{WidgetName: "Sphere Widget", WidgetCount: 1})
         db.First(&widget, "widget_name = ?", "WidgetSphere")
         //fmt.Printf(widget.WidgetName)
-	fmt.Printf("%+v\n", widget)
+	fmt.Printf("%+v\n", widget.WidgetName)
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":8080", nil)
         defer db.Close()
