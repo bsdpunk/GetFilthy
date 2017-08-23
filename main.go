@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+        "os"
 )
 
 type Page struct {
@@ -35,7 +36,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
+        htmlDir := os.Getenv("WEBSPHEREHTML")
 	fmt.Printf("%+v\n", "6")
+        tmpl = htmlDir + tmpl
 	t, err := template.ParseFiles(tmpl + ".html")
 	if err != nil {
 		fmt.Printf("%+v\n", err)
