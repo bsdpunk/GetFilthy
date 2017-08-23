@@ -21,6 +21,7 @@ func main() {
 
 	db, err := gorm.Open("mysql", "webSphere:ContainerBleed@/Widgets?charset=utf8&parseTime=True&loc=Local")
 	http.HandleFunc("/", handler)
+	_ = err
 	http.ListenAndServe(":8080", nil)
 	defer db.Close()
 }
