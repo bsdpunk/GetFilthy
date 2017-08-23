@@ -20,10 +20,14 @@ type Widgets struct {
 	WidgetCount int
 }
 
+//func (p *Page) save() error {
+//    filename := p.Title + ".txt"
+//    return ioutil.WriteFile(filename, p.Body, 0644)
+//}
+
 func loadPage(title string) (*Page, error) {
 	filename := title + ".txt"
 	body, err := ioutil.ReadFile(filename)
-	//fmt.Printf("" body
 	if err != nil {
 		return nil, err
 	}
@@ -37,12 +41,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	fmt.Printf("%+v\n", "6")
 	t, _ := template.ParseFiles(tmpl + ".html")
-	//	if t != nil {
-	//		return nil, err
-	//	}
 	fmt.Printf("%+v\n", t)
-	defer t.Execute(w, p)
+	t.Execute(w, p)
 }
+
+//func viewHandler(w http.ResponseWriter, r *http.Request) {
+//    title := r.URL.Path[len("/view/"):]
+//    p, _ := loadPage(title)
+//    fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", p.Title, p.Body)
+//}
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/view/"):]
@@ -60,7 +67,7 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 		p = &Page{Title: title}
 	}
 	fmt.Printf("%+v\n", "4")
-	renderTemplate(w, "edit", p)
+	defer renderTemplate(w, "edit", p)
 	fmt.Printf("%+v\n", "5")
 }
 
@@ -70,7 +77,9 @@ func main() {
 	_ = err
 	var widget Widgets
 	db.AutoMigrate(&Widgets{})
+	//db.Create(&Widgets{WidgetName: "Sphere Widget", WidgetCount: 1})
 	db.First(&widget, "widget_name = ?", "Sphere Widget")
+	//fmt.Printf(widget.WidgetName)
 	fmt.Printf("%+v\n", widget.WidgetName)
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/view/", viewHandler)
