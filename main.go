@@ -36,10 +36,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	fmt.Printf("%+v\n", "6")
-	t, _ := template.ParseFiles(tmpl + ".html")
-	//	if t != nil {
-	//		return nil, err
-	//	}
+	t, err := template.ParseFiles(tmpl + ".html")
+	if err != nil {
+		fmt.Printf("%+v\n", err)
+	}
 	fmt.Printf("%+v\n", t)
 	defer t.Execute(w, p)
 }
