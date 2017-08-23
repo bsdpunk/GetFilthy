@@ -23,5 +23,7 @@ func main() {
 	http.HandleFunc("/", handler)
 	_ = err
 	http.ListenAndServe(":8080", nil)
+        db.AutoMigrate(&Widgets{})
+        db.Create(&Widgets{WidgetName: "Sphere Widget", WidgetCount: 1})
 	defer db.Close()
 }
