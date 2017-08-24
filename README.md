@@ -2,7 +2,7 @@
 Go CRUD Application 
 
 # Enviromental Variables
-$WEBSPHEREHTML variable must be set to where the directory, in which the HTML template files are kept on your platform. On both mac and linux, I keep them in my go src directory for the project. This seems dumb, and I probably should have structured them more like MVVM or MVC framework, but I had limited time to work with.
+$WEBSPHEREHTML variable must be set to where the directory, in which the HTML template files are kept on your platform. On both mac and linux, I keep them in my go src directory for the project. This seems dumb, and I probably should have structured them more like MVVM or MVC framework, but I had limited time to work with. 
 
 Mac OS X
 ```
@@ -13,7 +13,7 @@ Linux
 export WEBSPHEREHTML=/home/youruser/go/src/github.com/bsdpunk/webSphere/
 ```
 
-If setting up from scratch you need a user, password and database for mysql. The default is root:ContainerBleed with the database Widgets.
+If setting up from scratch you need a user, password and database for mysql. The default is root:ContainerBleed with the database Widgets. Runs on port 80 by default.
 
 
 
