@@ -13,6 +13,10 @@ Linux
 export WEBSPHEREHTML=/home/youruser/go/src/github.com/bsdpunk/webSphere/
 ```
 
+If setting up from scratch you need a user, password and database for mysql.
+
+
+
 # Run Get Filthy
 ```
 getfilthy
