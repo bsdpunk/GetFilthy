@@ -1,5 +1,5 @@
 # GetFilthy
-CRUD Application 
+Go CRUD Application 
 
 # Enviromental Variables
 WEBSPHEREHTML variable must be set to where the directory, in which the HTML template files are kept on your platform.
