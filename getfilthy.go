@@ -13,24 +13,16 @@ import (
 )
 
 var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
+var port = string(":8080")
+var address = string("")
+var socket = address + port
+var htmlDir = string(os.Getenv("WEBSPHEREHTML"))
 
 type Page struct {
 	gorm.Model
 	Title string
 	Body  []byte
 }
-
-type Widgets struct {
-	gorm.Model
-	WidgetName  string
-	WidgetCount int
-}
-
-const tmpl = `
-{{range .}}
-    	{{.Title}}
-{{end}}
-`
 
 func loadPage(title string) (*Page, error) {
 	db, err := gorm.Open("mysql", "root:ContainerBleed@/Widgets?charset=utf8&parseTime=True&loc=Local")
@@ -146,6 +138,9 @@ func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
 }
 
 func main() {
+	if htmlDir == "" {
+		panic("$WEBSPHEREHTML IS NOT SET")
+	}
 	db, err := gorm.Open("mysql", "root:ContainerBleed@/Widgets?charset=utf8&parseTime=True&loc=Local")
 	_ = err
 	db.AutoMigrate(&Page{})
@@ -153,6 +148,6 @@ func main() {
 	http.HandleFunc("/view/", viewHandler)
 	http.HandleFunc("/edit/", editHandler)
 	http.HandleFunc("/save/", saveHandler)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(socket, nil)
 	defer db.Close()
 }
