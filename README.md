@@ -24,3 +24,4 @@ getfilthy
 * Not sleeping last night
 * Not finding a more elegant solution, than an env variable
 * Being a generally shit programmer
+* Not adding Delete but come on my dudes, not in your description
