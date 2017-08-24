@@ -13,7 +13,7 @@ Linux
 export WEBSPHEREHTML=/home/youruser/go/src/github.com/bsdpunk/webSphere/
 ```
 
-If setting up from scratch you need a user, password and database for mysql. The default is root:ContainerBleed with the database Widgets. Runs on port 80 by default.
+If setting up from scratch you need a user, password and database for mysql. The default is root:ContainerBleed with the database Widgets. Runs on port 8080 by default.
 
 
 
