@@ -20,11 +20,30 @@ type Page struct {
 	Body  []byte
 }
 
+//type Titles struct {
+//	gorm.Model
+//	Name string
+//	Atitle string
+//	Page   Page `gorm:"ForeignKey:Title;AssociationForeignKey:Atitle"`
+//}
+
+//type AllTit struct {
+//	gorm.Model
+//	Name   string
+//	Titles []Page `gorm:"many2many:title_;"`
+//}
+
 type Widgets struct {
 	gorm.Model
 	WidgetName  string
 	WidgetCount int
 }
+
+const tmpl = `
+{{range .}}
+    	{{.Title}}
+{{end}}
+`
 
 func loadPage(title string) (*Page, error) {
 	db, err := gorm.Open("mysql", "root:ContainerBleed@/Widgets?charset=utf8&parseTime=True&loc=Local")
@@ -58,10 +77,29 @@ func (p *Page) save() error {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "you appear to have a nonexistant url %s!", r.URL.Path[1:])
+	//fmt.Fprintf(w, "you appear to have a nonexistant url %s!", r.URL.Path[1:])
+	db, err := gorm.Open("mysql", "root:ContainerBleed@/Widgets?charset=utf8&parseTime=True&loc=Local")
+	_ = err
+	//var p Page
+	//var t AllTit
+	//db.Find(&p)
+	allPages := []*Page{}
+	db.Find(&allPages)
+	//db.Model(&p).Related(&t.Titles)
+	fmt.Println(&allPages)
+	for _, allPage := range allPages {
+		fmt.Printf("Title: %s Body: %d\n", allPage.Title, allPage.Body)
+		//fmt.Printf("Addr: %p\n", &dog)
+
+		fmt.Println("")
+	}
+	//t := template.Must(template.New("tmpl").Parse(tmpl))
+	////t.Execute(w, allPages)
+	renderTemplate(w, "index", allPages)
+	defer db.Close()
 }
 
-func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
+func renderTemplate(w http.ResponseWriter, tmpl string, p []*Page) {
 	htmlDir := os.Getenv("WEBSPHEREHTML")
 	fmt.Printf("%+v\n", "6")
 	tmpl = htmlDir + tmpl
@@ -70,7 +108,11 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 		fmt.Printf("%+v\n", err)
 	}
 	fmt.Printf("%+v\n", t)
-	defer t.Execute(w, p)
+	if tmpl == "index" {
+		defer t.Execute(w, p)
+	} else {
+		defer t.Execute(w, p[0])
+	}
 }
 
 //func viewHandler(w http.ResponseWriter, r *http.Request) {
@@ -89,7 +131,9 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
 		return
 	}
-	renderTemplate(w, "view", p)
+	var ps = []*Page{p}
+	//ps[0] := p Page
+	renderTemplate(w, "view", ps)
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
@@ -102,7 +146,9 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		p = &Page{Title: title}
 	}
-	renderTemplate(w, "edit", p)
+	var ps = []*Page{p}
+	//ps[0] := p Page
+	renderTemplate(w, "edit", ps)
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
@@ -126,7 +172,17 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	_ = err
 	fmt.Println(title + " T")
 	fmt.Println(body + " b")
-	db.Create(&Page{Title: title, Body: []byte(body)})
+	var p Page
+	db.First(&p, "Title = ?", title)
+	fmt.Printf("%+v\n", p)
+	if p.Title == "" {
+		p = Page{Title: title, Body: []byte(body)}
+		db.Create(&Page{Title: title, Body: []byte(body)})
+	} else {
+		p.Body = []byte(body)
+		db.Save(&p)
+	}
+
 	fmt.Println(body)
 	http.Redirect(w, r, "/view/"+title, http.StatusFound)
 }
@@ -146,6 +202,7 @@ func main() {
 	_ = err
 	//var widget Widgets
 	db.AutoMigrate(&Widgets{})
+	//db.AutoMigrate(&AllTit{})
 	db.AutoMigrate(&Page{})
 	//db.First(&widget, "widget_name = ?", "Sphere Widget")
 	//fmt.Printf("%+v\n", widget.WidgetName)
