@@ -1,5 +1,7 @@
 # Get Filthy
+![Get Filthy Banner](http://i.imgur.com/OH78f94.png)
 Go CRUD Application 
+
 
 # Enviromental Variables
 $WEBSPHEREHTML variable must be set to where the directory, in which the HTML template files are kept on your platform. On both mac and linux, I keep them in my go src directory for the project. This seems dumb, and I probably should have structured them more like MVVM or MVC framework, but I had limited time to work with. 
