@@ -56,6 +56,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	//	fmt.Println("")
 	//}
+	var hostName = string(r.Host)
+	fmt.Println(hostName)
 	renderTemplate(w, "index", allPages)
 	defer db.Close()
 }
@@ -79,6 +81,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p []*Page) {
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	title, err := getTitle(w, r)
+
 	if err != nil {
 		return
 	}
@@ -134,6 +137,7 @@ func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
 		http.NotFound(w, r)
 		return "", errors.New("Invalid Page Title")
 	}
+	fmt.Println(r.URL.Path)
 	return m[2], nil // The title is the second subexpression.
 }
 
