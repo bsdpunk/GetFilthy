@@ -6,7 +6,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"html/template"
-	//	"io/ioutil"
 	"net/http"
 	"os"
 	"regexp"
@@ -41,37 +40,22 @@ func loadPage(title string) (*Page, error) {
 
 }
 
-//func (p *Page) save() error {
-//	filename := p.Title + ".txt"
-//	return ioutil.WriteFile(filename, p.Body, 0600)
-//}
-
 func handler(w http.ResponseWriter, r *http.Request) {
 	db, err := gorm.Open("mysql", "root:ContainerBleed@/Widgets?charset=utf8&parseTime=True&loc=Local")
 	_ = err
 	allPages := []*Page{}
 	db.Find(&allPages)
-	//for _, allPage := range allPages {
-	//	fmt.Printf("Title: %s Body: %d\n", allPage.Title, allPage.Body)
-
-	//	fmt.Println("")
-	//}
-	var hostName = string(r.Host)
-	fmt.Println(hostName)
 	renderTemplate(w, "index", allPages)
 	defer db.Close()
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p []*Page) {
 	htmlDir := os.Getenv("WEBSPHEREHTML")
-	//fmt.Printf("%+v\n", "6")
 	var full string = htmlDir + tmpl + ".html"
 	t, err := template.ParseFiles(full)
-	//fmt.Println(full)
 	if err != nil {
 		fmt.Printf("%+v\n", err)
 	}
-	//fmt.Printf("%+v\n", t)
 	if tmpl == "index" {
 		t.Execute(w, p)
 	} else {
@@ -96,7 +80,6 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
 	title, err := getTitle(w, r)
-	//fmt.Println(title + " :Title")
 	if err != nil {
 		return
 	}
@@ -114,11 +97,8 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title")
 	db, err := gorm.Open("mysql", "root:ContainerBleed@/Widgets?charset=utf8&parseTime=True&loc=Local")
 	_ = err
-	//fmt.Println(title + " T")
-	//fmt.Println(body + " b")
 	var p Page
 	db.First(&p, "Title = ?", title)
-	//fmt.Printf("%+v\n", p)
 	if p.Title == "" {
 		p = Page{Title: title, Body: []byte(body)}
 		db.Create(&Page{Title: title, Body: []byte(body)})
@@ -127,7 +107,6 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 		db.Save(&p)
 	}
 
-	//fmt.Println(body)
 	http.Redirect(w, r, "/view/"+title, http.StatusFound)
 }
 
@@ -137,8 +116,7 @@ func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
 		http.NotFound(w, r)
 		return "", errors.New("Invalid Page Title")
 	}
-	fmt.Println(r.URL.Path)
-	return m[2], nil // The title is the second subexpression.
+	return m[2], nil
 }
 
 func main() {
