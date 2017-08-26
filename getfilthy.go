@@ -106,7 +106,7 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 		p.Body = []byte(body)
 		db.Save(&p)
 	}
-
+	defer db.Close()
 	http.Redirect(w, r, "/view/"+title, http.StatusFound)
 }
 
